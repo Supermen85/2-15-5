@@ -1,57 +1,32 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(WalkAnimationHandler))]
-[RequireComponent(typeof(Walker))]
-
+[RequireComponent(typeof(WalkAnimationHandler), (typeof(Walker)))]
+[RequireComponent(typeof(Patrol))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private Transform _waypoint1;
-    [SerializeField] private Transform _waypoint2;
-    [SerializeField] private float _minDistance = 0.3f;
+    [SerializeField] private WalkAnimationHandler _walkAnimationHandler;
+    [SerializeField] private Walker _walker;
+    [SerializeField] private Patrol _patrol;
 
-    private WalkAnimationHandler _walkAnimationHandler;
-    private Walker _walker;
-    private Transform _currentWaypoint;
-
-    private float _direction;
-
-    private void Awake()
+    private void OnValidate()
     {
-        _walkAnimationHandler = GetComponent<WalkAnimationHandler>();
-        _walker = GetComponent<Walker>();  
-    }
+        WalkAnimationHandler walkAnimationHandler = GetComponent<WalkAnimationHandler>();
+        Walker walker = GetComponent<Walker>();  
+        Patrol patrol = GetComponent<Patrol>();
+        
+        if (_walkAnimationHandler != null || _walkAnimationHandler != walkAnimationHandler)
+            _walkAnimationHandler = walkAnimationHandler;
 
-    private void Start()
-    {
-        _currentWaypoint = _waypoint1;
-        _direction = _currentWaypoint.transform.position.x - transform.position.x;
+        if (_walker != null || _walker != walker)
+            _walker = walker;
+
+        if (_patrol != null || _patrol != patrol)
+            _patrol = patrol;
     }
 
     private void FixedUpdate()
     {
-        _walker.Walk(_direction);
-        _walkAnimationHandler.Walk(_direction);
-    }
-
-    private void Update()
-    {
-        if (IsCloseEnough())
-            ChangeDirection();
-    }
-
-    private bool IsCloseEnough()
-    {
-        float distance = _currentWaypoint.transform.position.x - transform.position.x;
-        
-        if (distance < 0)
-            distance *= -1;
-
-        return (distance < _minDistance);
-    }
-
-    private void ChangeDirection()
-    {
-        _currentWaypoint = (_currentWaypoint == _waypoint1) ? _waypoint2 : _waypoint1;
-        _direction = _currentWaypoint.transform.position.x - transform.position.x;
+        _walker.Walk(_patrol.Direction);
+        _walkAnimationHandler.Walk(_patrol.Direction);
     }
 }

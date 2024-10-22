@@ -1,54 +1,71 @@
 using UnityEngine;
 
-[RequireComponent(typeof(WalkAnimationHandler))]
-[RequireComponent(typeof(JumpAnimationHandler))]
-[RequireComponent(typeof(Walker))]
-[RequireComponent(typeof(Jumper))]
-[RequireComponent(typeof(GroundDetector))]
+[RequireComponent(typeof(Jumper), typeof(JumpAnimationHandler))]
+[RequireComponent(typeof(Walker), typeof(WalkAnimationHandler))]
 [RequireComponent(typeof(InputReader))]
-
+[RequireComponent(typeof(Collector))]
 public class Player : MonoBehaviour
 {
-    private WalkAnimationHandler _walkAnimationHandler;   
-    private JumpAnimationHandler _jumpAnimationHandler;
-    private Walker _walker;
-    private Jumper _jumper;
-    private GroundDetector _groundDetector;
-    private InputReader _inputReader;
+    [SerializeField] private WalkAnimationHandler _walkAnimationHandler;
+    [SerializeField] private JumpAnimationHandler _jumpAnimationHandler;
+    [SerializeField] private Walker _walker;
+    [SerializeField] private Jumper _jumper;
+    [SerializeField] private InputReader _inputReader;
+    [SerializeField] private Collector _collector;
+    [SerializeField] private GroundDetector _sensor;
+    
+    private int _wallet = 0;
 
-    private float _direction = 0f;
-
-    private void Awake()
+    private void OnValidate()
     {
-        _walkAnimationHandler = GetComponent<WalkAnimationHandler>();
-        _jumpAnimationHandler = GetComponent<JumpAnimationHandler>();
-        _walker = GetComponent<Walker>();
-        _jumper = GetComponent<Jumper>();
-        _groundDetector = GetComponent<GroundDetector>();
-        _inputReader = GetComponent<InputReader>();
+        WalkAnimationHandler walkAnimationHandler = GetComponent<WalkAnimationHandler>();
+        JumpAnimationHandler jumpAnimationHandler = GetComponent<JumpAnimationHandler>();
+        Walker walker = GetComponent<Walker>();
+        Jumper jumper = GetComponent<Jumper>();
+        InputReader inputReader = GetComponent<InputReader>();
+        Collector collector = GetComponent<Collector>();
+
+        if (_walkAnimationHandler != null || _walkAnimationHandler != walkAnimationHandler)
+            _walkAnimationHandler = walkAnimationHandler;
+
+        if (_jumpAnimationHandler != null || _jumpAnimationHandler != jumpAnimationHandler)
+            _jumpAnimationHandler = jumpAnimationHandler;
+
+        if (_walker != null || _walker != walker)
+            _walker = walker;
+
+        if (_jumper != null || _jumper != jumper)
+            _jumper = jumper;
+
+        if (_inputReader != null || _inputReader != inputReader)
+            _inputReader = inputReader;
+
+        if (_collector != null || _collector != collector)
+            _collector = collector;
     }
 
     private void FixedUpdate()
     {
-        _direction = _inputReader.Direction;
-        Walk();
+        Walk(_inputReader.Direction);
     }
 
     private void OnEnable()
     {
         _inputReader.JumpKeyPressed += Jump;
-        _groundDetector.Landed += Land;
+        _sensor.Landed += Land;
+        _collector.CoinCollected += CollectCoin;
     }
 
     private void OnDisable()
     {
         _inputReader.JumpKeyPressed -= Jump;
-        _groundDetector.Landed -= Land;
+        _sensor.Landed -= Land;
+        _collector.CoinCollected -= CollectCoin;
     }
 
     private void Jump()
     {
-        if (_groundDetector.IsGrounded())
+        if (_sensor.IsGrounded)
         {
             _jumper.Jump();
             _jumpAnimationHandler.Jump();
@@ -60,9 +77,15 @@ public class Player : MonoBehaviour
         _jumpAnimationHandler.Land();
     }
 
-    private void Walk()
+    private void Walk(float direction)
     {
-        _walker.Walk(_direction);
-        _walkAnimationHandler.Walk(_direction);
+        _walker.Walk(direction);
+        _walkAnimationHandler.Walk(direction);
+    }
+
+    private void CollectCoin(int value)
+    {
+        if (value > 0)
+            _wallet += value;
     }
 }

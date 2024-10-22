@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-
 public class Walker : MonoBehaviour
 {
+    [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private float _walkSpeed = 5f;
 
-    private Rigidbody2D _rigidbody2D;
-
-    private void Awake()
+    private void OnValidate()
     {
-        _rigidbody2D = GetComponent<Rigidbody2D>();
+        Rigidbody2D rigidbody2D = GetComponent<Rigidbody2D>();
+
+        if (_rigidbody2D != null || _rigidbody2D != rigidbody2D)
+            _rigidbody2D = rigidbody2D;
     }
 
     public void Walk(float direction)

@@ -7,20 +7,18 @@ public class GroundDetector : MonoBehaviour
 
     public event Action Landed;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public bool IsGrounded => _collisionCount > 0;
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         _collisionCount++;
-
-        Landed?.Invoke();
+        
+        if (_collisionCount == 1)
+            Landed?.Invoke();
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         _collisionCount--;
     }
-
-    public bool IsGrounded()
-    {
-        return _collisionCount > 0; 
-    }    
 }

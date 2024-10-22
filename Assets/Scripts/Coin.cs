@@ -2,13 +2,19 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CircleCollider2D))]
-
-public class Coin : MonoBehaviour
+public class Coin : MonoBehaviour 
 {
     public event Action Collected;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public int Value {  get; private set; }
+
+    private void Start()
     {
-        Collected?.Invoke();        
+        Value = 1;
+    }
+
+    public void Collect()
+    {
+        Collected?.Invoke();
     }
 }

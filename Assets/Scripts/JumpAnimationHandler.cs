@@ -1,17 +1,19 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-
 public class JumpAnimationHandler : MonoBehaviour
 {
     private static readonly int Jumping = Animator.StringToHash(nameof(Jumping));
     private static readonly int IsGrounded = Animator.StringToHash(nameof(IsGrounded));
 
-    private Animator _animator;
+    [SerializeField] private Animator _animator;
 
-    private void Awake()
+    private void OnValidate()
     {
-        _animator = GetComponent<Animator>();
+        Animator animator = GetComponent<Animator>();
+
+        if (_animator == null || _animator != animator)
+            _animator = animator;
     }
 
     public void Jump()

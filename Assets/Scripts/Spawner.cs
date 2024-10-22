@@ -2,31 +2,32 @@
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Transform _spawnPoint1;
-    [SerializeField] private Transform _spawnPoint2;
-    [SerializeField] private Coin _coin;
+    [SerializeField] private Transform[] _spawnPoints;
+    [SerializeField] private Coin _coinPrefab;
 
+    private Coin _coin;
     private Transform _currentSpawnPoint;
 
     private void Start()
     {
-        _currentSpawnPoint = _spawnPoint1;
-        _coin.transform.position = _currentSpawnPoint.position;
-    }
+        _currentSpawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
 
-    private void OnEnable()
-    {
+        _coin = Instantiate(_coinPrefab, _currentSpawnPoint.position, Quaternion.identity);
         _coin.Collected += ChangePosition;
-    }
 
-    private void OnDisable()
-    {
-        _coin.Collected -= ChangePosition;
+        _coin.transform.position = _currentSpawnPoint.position;
     }
 
     private void ChangePosition()
     {
-        _currentSpawnPoint = (_currentSpawnPoint == _spawnPoint1 ? _spawnPoint2 : _spawnPoint1);
+        Transform previousSpawnpoint = _currentSpawnPoint;
+
+        do
+        {
+            _currentSpawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
+        }
+        while (previousSpawnpoint == _currentSpawnPoint);
+
         _coin.transform.position = _currentSpawnPoint.position;
     }
 }
