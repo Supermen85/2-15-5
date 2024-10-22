@@ -8,14 +8,23 @@ public class Spawner : MonoBehaviour
     private Coin _coin;
     private Transform _currentSpawnPoint;
 
-    private void Start()
+    private void Awake()
     {
         _currentSpawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
 
         _coin = Instantiate(_coinPrefab, _currentSpawnPoint.position, Quaternion.identity);
-        _coin.Collected += ChangePosition;
 
         _coin.transform.position = _currentSpawnPoint.position;
+    }
+
+    private void OnEnable()
+    {
+        _coin.Collected += ChangePosition;
+    }
+
+    private void OnDisable()
+    {
+        _coin.Collected -= ChangePosition;
     }
 
     private void ChangePosition()

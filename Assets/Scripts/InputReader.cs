@@ -8,11 +8,24 @@ public class InputReader : MonoBehaviour
 
     public event Action JumpKeyPressed;
 
-    public float Direction => Input.GetAxis(Horizontal);
+    public float Direction { get; private set; }
+
+    private bool _isJumping = false;
+
+    private void FixedUpdate()
+    {
+        if (_isJumping)
+        {
+            JumpKeyPressed?.Invoke();
+            _isJumping = false;
+        }
+    }
 
     private void Update()
     {
+        Direction = Input.GetAxis(Horizontal);
+
         if (Input.GetKeyDown(JumpKey))
-            JumpKeyPressed?.Invoke();
+            _isJumping = true;
     }
 }

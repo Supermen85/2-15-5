@@ -44,11 +44,6 @@ public class Player : MonoBehaviour
             _collector = collector;
     }
 
-    private void FixedUpdate()
-    {
-        Walk(_inputReader.Direction);
-    }
-
     private void OnEnable()
     {
         _inputReader.JumpKeyPressed += Jump;
@@ -61,6 +56,11 @@ public class Player : MonoBehaviour
         _inputReader.JumpKeyPressed -= Jump;
         _sensor.Landed -= Land;
         _collector.CoinCollected -= CollectCoin;
+    }
+
+    private void FixedUpdate()
+    {
+        Walk(_inputReader.Direction);
     }
 
     private void Jump()

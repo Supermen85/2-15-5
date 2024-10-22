@@ -8,6 +8,9 @@ public class WalkAnimationHandler : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _transform;
 
+    private Quaternion _right = Quaternion.Euler(Vector3.zero);
+    private Quaternion _left = Quaternion.Euler(0, 180f, 0);
+    
     private float _yRotation = 180f;
 
     private void OnValidate()
@@ -27,9 +30,9 @@ public class WalkAnimationHandler : MonoBehaviour
         _animator.SetBool(Walking, direction != 0);
 
         if (direction > 0 && _transform.rotation.eulerAngles.y == _yRotation)
-            _transform.rotation = Quaternion.Euler(Vector3.zero);
+            _transform.rotation = _right;
 
         if (direction < 0 && _transform.rotation.eulerAngles == Vector3.zero)
-            _transform.rotation = Quaternion.Euler(0, _yRotation, 0);
+            _transform.rotation = _left;
     }
 }
